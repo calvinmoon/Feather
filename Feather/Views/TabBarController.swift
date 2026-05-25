@@ -21,27 +21,27 @@ final class TabBarController: UITabBarController {
 	
 	private func _setupTabs() {
 		let files = _createNavigation(
-			with: .localized("Files"),
+			with: "Files",
 			using: UIImage(systemName: "folder.fill"),
 			controller: UIViewController()
 		)
 		
 		let sources = _createNavigation(
-			with: .localized("Sources"),
+			with: "Sources",
 			using: UIImage(systemName: "globe.desk.fill"),
 			controller: UIHostingController(rootView: SourcesView().environment(\.managedObjectContext, Storage.shared.context)),
 			withNavigation: false,
 		)
 		
 		let library = _createNavigation(
-			with: .localized("Apps"),
+			with: "Apps",
 			using: UIImage(systemName: "square.grid.2x2.fill"),
 			controller: UIHostingController(rootView: LibraryView().environment(\.managedObjectContext, Storage.shared.context)),
 			withNavigation: false,
 		)
 		
 		let settings = _createNavigation(
-			with: .localized("Settings"),
+			with: "Settings",
 			using: UIImage(systemName: "gearshape.2.fill"),
 			controller: SettingsViewController(),
 		)

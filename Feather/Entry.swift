@@ -31,7 +31,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 	) -> Bool {
 		_createPipeline()
 		_createDocumentsDirectories()
-		ResetView.clearWorkCache()
 		_addDefaultCertificates()
 		
 		let tc = TabBarController()
