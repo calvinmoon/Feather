@@ -1,49 +1,43 @@
 //
-//  FeatherApp.swift
+//  AppDelegate.swift
 //  Feather
 //
-//  Created by samara on 10.04.2025.
+//  Created by samsam on 5/25/26.
 //
 
+import UIKit
 import SwiftUI
 import Nuke
 import IDeviceSwift
 import OSLog
 
-@main enum Entry {
-	static func main() {
-		let _ = Storage.shared
-		let _ = DownloadManager.shared
-		let _ = HeartbeatManager.shared
-		
-		let delegate = AppDelegate()
-		UIApplication.shared.delegate = delegate
-		_ = UIApplicationMain(CommandLine.argc, CommandLine.unsafeArgv, nil, NSStringFromClass(AppDelegate.self))
-	}
-}
-
-final class AppDelegate: UIResponder, UIApplicationDelegate {
-	var window: UIWindow?
-	
+@main final class AppDelegate: UIResponder, UIApplicationDelegate {	
 	func application(
 		_ application: UIApplication,
 		didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
 	) -> Bool {
+		let _ = Storage.shared
+		let _ = DownloadManager.shared
+		let _ = HeartbeatManager.shared
+		
 		_createPipeline()
 		_createDocumentsDirectories()
 		_addDefaultCertificates()
 		
-		let tc = TabBarController()
-		window = UIWindow(frame: UIScreen.main.bounds)
-		window?.rootViewController = tc
-		window?.makeKeyAndVisible()
-		
-		DispatchQueue.main.async {
-			self.window!.tintColor = UIColor(Color(hex: UserDefaults.standard.string(forKey: "Feather.userTintColor") ?? "#848ef9"))
-			self.window!.overrideUserInterfaceStyle = UIUserInterfaceStyle(rawValue: UserDefaults.standard.integer(forKey: "Feather.userInterfaceStyle")) ?? .unspecified
-		}
-		
 		return true
+	}
+	
+	func application(
+		_ application: UIApplication,
+		configurationForConnecting connectingSceneSession: UISceneSession,
+		options: UIScene.ConnectionOptions
+	) -> UISceneConfiguration {
+		let config = UISceneConfiguration(
+			name: "Default Configuration",
+			sessionRole: connectingSceneSession.role
+		)
+		config.delegateClass = SceneDelegate.self
+		return config
 	}
 	
 	private func _createPipeline() {
