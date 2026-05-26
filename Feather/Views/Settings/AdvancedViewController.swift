@@ -50,8 +50,8 @@ extension AdvancedViewController {
 			content.textProperties.color = .label
 			
 			let toggle = UISwitch()
-			toggle.isOn = UserDefaults.standard.bool(forKey: "advancedModeEnabled")
-			toggle.addTarget(self, action: #selector(advancedSwitchChanged(_:)), for: .valueChanged)
+			toggle.isOn = UserDefaults.standard.bool(forKey: "Feather.stayInBackground")
+			toggle.addTarget(self, action: #selector(_stayInBackgroundSwitchChanged(_:)), for: .valueChanged)
 			cell.accessoryView = toggle
 			cell.accessoryType = .none
 			cell.selectionStyle = .none
@@ -69,8 +69,7 @@ extension AdvancedViewController {
 		return cell
 	}
 	
-	@objc private func advancedSwitchChanged(_ sender: UISwitch) {
-	}
+	@objc private func _stayInBackgroundSwitchChanged(_ sender: UISwitch) {}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		switch (indexPath.section, indexPath.row) {

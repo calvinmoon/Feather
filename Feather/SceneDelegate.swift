@@ -22,12 +22,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		let controller = TabBarController()
 		window.rootViewController = controller
 		
-		window.tintColor = UIColor(
-			Color(
-				hex: UserDefaults.standard.string(forKey: "Feather.userTintColor") 
-				?? "#848ef9"
-			)
-		)
+		if 
+			let data = UserDefaults.standard.data(forKey: "Feather.userTintColor"),
+			let color = try? NSKeyedUnarchiver.unarchivedObject(ofClass: UIColor.self, from: data) 
+		{
+			window.tintColor = color
+		}
+		
 		window.overrideUserInterfaceStyle = UIUserInterfaceStyle(
 			rawValue: UserDefaults.standard.integer(forKey: "Feather.userInterfaceStyle")
 		) ?? .unspecified
