@@ -157,57 +157,23 @@ struct InstallPreviewView: View {
 			)
 			return
 		}
-				
+
 		_installTask = Task.detached {
 			do {
-				let handler = await ArchiveHandler(app: app, viewModel: viewModel)
-				try await handler.move()
-				
-				let packageUrl = try await handler.archive()
-
-				// The pane may have been dismissed while packaging; bail out before
-				// anything is offered to the device.
-				try Task.checkCancellation()
-				if await !isSharing {
-					if await _installationMethod == 0 {
+				// Updating an app installed with a different certificate is rejected by
+				// installd only after the whole payload has been uploaded — ask the user
+				// up front so they can choose to wipe and reinstall instead.
+				if await !isSharing && _installationMethod == 1 && app.identifier != Bundle.main.bundleIdentifier! {
+					let needsReinstall = try await _installedAppHasMismatchedCertificate()
+					if needsReinstall {
 						await MainActor.run {
-							installer.packageUrl = packageUrl
-							viewModel.status = .ready
+							_presentMismatchedCertificateAlert()
 						}
-						
-						if case .installing = await viewModel.status {
-							let task = await startInstallProgressPolling(
-								bundleID: app.identifier!,
-								viewModel: viewModel
-							)
-
-							await MainActor.run {
-								progressTask = task
-							}
-						}
-					} else if await _installationMethod == 1 {
-						let handler = await InstallationProxy(viewModel: viewModel)
-						let isSelf = app.identifier == Bundle.main.bundleIdentifier!
-						// InstallationProxy cancels its inner operation (upload and
-						// connection setup) when the surrounding task is cancelled.
-						try await handler.install(at: packageUrl, suspend: isSelf)
-					}
-				} else {
-					let package = try await handler.moveToArchive(packageUrl, shouldOpen: !_useShareSheet)
-					
-					if await !_useShareSheet {
-						await MainActor.run {
-							dismiss()
-						}
-					} else {
-						if let package {
-							await MainActor.run {
-								dismiss()
-								UIActivityViewController.show(activityItems: [package])
-							}
-						}
+						return
 					}
 				}
+
+				try await _performInstall()
 			} catch is CancellationError {
 				// The pane was dismissed mid-install; the operation was
 				// stopped as best as we could, nothing to report.
@@ -233,6 +199,136 @@ struct InstallPreviewView: View {
 				}
 			}
 		}
+	}
+
+	private func _performInstall() async throws {
+		let handler = await ArchiveHandler(app: app, viewModel: viewModel)
+		try await handler.move()
+
+		let packageUrl = try await handler.archive()
+
+		// The pane may have been dismissed while packaging; bail out before
+		// anything is offered to the device.
+		try Task.checkCancellation()
+		if await !isSharing {
+			if await _installationMethod == 0 {
+				await MainActor.run {
+					installer.packageUrl = packageUrl
+					viewModel.status = .ready
+				}
+
+				if case .installing = await viewModel.status {
+					let task = await startInstallProgressPolling(
+						bundleID: app.identifier!,
+						viewModel: viewModel
+					)
+
+					await MainActor.run {
+						progressTask = task
+					}
+				}
+			} else if await _installationMethod == 1 {
+				let handler = await InstallationProxy(viewModel: viewModel)
+				let isSelf = app.identifier == Bundle.main.bundleIdentifier!
+				// InstallationProxy cancels its inner operation (upload and
+				// connection setup) when the surrounding task is cancelled.
+				try await handler.install(at: packageUrl, suspend: isSelf)
+			}
+		} else {
+			let package = try await handler.moveToArchive(packageUrl, shouldOpen: !_useShareSheet)
+
+			if await !_useShareSheet {
+				await MainActor.run {
+					dismiss()
+				}
+			} else {
+				if let package {
+					await MainActor.run {
+						dismiss()
+						UIActivityViewController.show(activityItems: [package])
+					}
+				}
+			}
+		}
+	}
+
+	private func _presentMismatchedCertificateAlert() {
+		let reinstallAction = UIAlertAction(
+			title: .localized("Uninstall & Install"),
+			style: .destructive
+		) { _ in
+			_installTask = Task.detached {
+				do {
+					if let bundleID = await self.app.identifier {
+						try await InstallationAppProxy.deleteApp(for: bundleID)
+
+						// give installd a moment to settle after the wipe
+						try? await Task.sleep(nanoseconds: 500_000_000)
+					}
+
+					try await self._performInstall()
+				} catch is CancellationError {
+					// The pane was dismissed mid-install; the operation
+					// was stopped as best as we could, nothing to report.
+				} catch is VPNUnreachableError {
+					await MainActor.run {
+						self._presentVPNUnreachableAlert()
+					}
+				} catch {
+					Logger.misc.error("Reinstall after uninstall failed: \(String(describing: error))")
+
+					await MainActor.run {
+						UIAlertController.showAlertWithOk(
+							title: .localized("Install"),
+							message: String(describing: error),
+							action: {
+								self.dismiss()
+							}
+						)
+					}
+				}
+			}
+		}
+
+		let cancelAction = UIAlertAction(title: .localized("Cancel"), style: .cancel) { _ in
+			dismiss()
+		}
+
+		UIAlertController.showAlert(
+			title: .localized("Install"),
+			message: .localized("‘%@‘ is already installed with a different certificate. Uninstall it and install the new one? All its data will be lost.", arguments: app.name ?? ""),
+			actions: [reinstallAction, cancelAction]
+		)
+	}
+
+	private func _installedAppHasMismatchedCertificate() async throws -> Bool {
+		guard
+			let bundleID = app.identifier,
+			let installed = try await InstallationAppProxy.lookupApp(for: bundleID),
+			let installedIdentifier = installed.Entitlements?["application-identifier"]?.value as? String,
+			let newIdentifier = _newApplicationIdentifier()
+		else { return false }
+
+		return installedIdentifier != newIdentifier
+	}
+
+	private func _newApplicationIdentifier() -> String? {
+		if
+			let signed = app as? Signed,
+			let pair = signed.certificate,
+			let decoded = Storage.shared.getProvisionFileDecoded(for: pair)
+		{
+			return decoded.Entitlements?["application-identifier"]?.value as? String
+		}
+
+		// Imported (pre-signed) apps carry their profile inside the bundle
+		guard
+			let appUrl = Storage.shared.getAppDirectory(for: app),
+			FileManager.default.fileExists(atPath: appUrl.appendingPathComponent("embedded.mobileprovision").path)
+		else { return nil }
+
+		let reader = CertificateReader(appUrl.appendingPathComponent("embedded.mobileprovision"))
+		return reader.decoded?.Entitlements?["application-identifier"]?.value as? String
 	}
 
 	private func _presentVPNUnreachableAlert() {

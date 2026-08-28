@@ -17887,6 +17887,17 @@
         }
       }
     },
+    "Uninstall & Install" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Uninstall & Install"
+          }
+        }
+      }
+    },
     "Update" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -18588,6 +18599,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更新内容"
+          }
+        }
+      }
+    },
+    "‘%@‘ is already installed with a different certificate. Uninstall it and install the new one? All its data will be lost." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "‘%@‘ is already installed with a different certificate. Uninstall it and install the new one? All its data will be lost."
           }
         }
       }
