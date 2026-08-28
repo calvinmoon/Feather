@@ -1,8 +1,8 @@
 # Featherwright
 
-[![GitHub Release](https://img.shields.io/github/v/release/akameslayer/Feather?include_prereleases)](https://github.com/akameslayer/Feather/releases)
-[![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/akameslayer/Feather/total)](https://github.com/akameslayer/Feather/releases)
-[![GitHub License](https://img.shields.io/github/license/akameslayer/Feather?color=%23C96FAD)](https://github.com/akameslayer/Feather/blob/main/LICENSE)
+[![GitHub Release](https://img.shields.io/github/v/release/akameslayer/Featherwright?include_prereleases)](https://github.com/akameslayer/Featherwright/releases)
+[![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/akameslayer/Featherwright/total)](https://github.com/akameslayer/Featherwright/releases)
+[![GitHub License](https://img.shields.io/github/license/akameslayer/Featherwright?color=%23C96FAD)](https://github.com/akameslayer/Featherwright/blob/main/LICENSE)
 
 **Featherwright** is a community-driven fork of [Feather](https://github.com/claration/Feather) — the on-device iOS app that signs and installs applications, using certificate pairs and various installation techniques to allow apps to install to your device. This is an entirely stock application and uses built-in features to be able to do this!
 
@@ -54,16 +54,16 @@ Small things, honestly — but they're things that weren't going upstream:
 - **Pairing file status button** in tunnel settings.
 - Open **Get Info** when tapping a signed app in the library.
 
-Check the [commit history](https://github.com/akameslayer/Feather/commits/main/) for the latest.
+Check the [commit history](https://github.com/akameslayer/Featherwright/commits/main/) for the latest.
 
 ## Download
 
-Visit [releases](https://github.com/akameslayer/Feather/releases) and get the latest `.ipa`.
+Visit [releases](https://github.com/akameslayer/Featherwright/releases) and get the latest `.ipa`.
 
-<a href="https://celloserenity.github.io/altdirect/?url=https://raw.githubusercontent.com/akameslayer/Feather/refs/heads/main/app-repo.json" target="_blank">
+<a href="https://celloserenity.github.io/altdirect/?url=https://raw.githubusercontent.com/akameslayer/Featherwright/refs/heads/main/app-repo.json" target="_blank">
    <img src="https://github.com/CelloSerenity/altdirect/blob/main/assets/png/AltSource_Blue.png?raw=true" alt="Add AltSource" width="200">
 </a>
-<a href="https://github.com/akameslayer/Feather/releases/latest/download/Feather.ipa" target="_blank">
+<a href="https://github.com/akameslayer/Featherwright/releases/latest/download/Feather.ipa" target="_blank">
    <img src="https://github.com/CelloSerenity/altdirect/blob/main/assets/png/Download_Blue.png?raw=true" alt="Download .ipa" width="200">
 </a>
 
@@ -76,7 +76,7 @@ Visit the [HOW IT WORKS](./HOW_IT_WORKS.md) page.
 Requirements: Xcode 16.0+, Swift 6.0, deployment target iOS 16.0.
 
 ```sh
-git clone https://github.com/akameslayer/Feather --recursive
+git clone https://github.com/akameslayer/Featherwright --recursive
 cd Feather
 make iphoneos      # produces packages/Feather.ipa
 ```
@@ -105,6 +105,6 @@ Featherwright is a fork of [claration/Feather](https://github.com/claration/Feat
 
 ## License
 
-This project is licensed under the GPL-3.0 license. You can see the full details of the license [here](https://github.com/akameslayer/Feather/blob/main/LICENSE). It's under this specific license because I wanted to make a project that is transparent to the user thats related to certificate paired sideloading, before this project there weren't any open source projects that filled in this gap.
+This project is licensed under the GPL-3.0 license. You can see the full details of the license [here](https://github.com/akameslayer/Featherwright/blob/main/LICENSE). It's under this specific license because I wanted to make a project that is transparent to the user thats related to certificate paired sideloading, before this project there weren't any open source projects that filled in this gap.
 
 By contributing to this project, you agree to license your code under the GPL-3.0 license as well (including agreeing to license exceptions), ensuring that your work, like all other contributions, remains freely accessible and open.

@@ -25,7 +25,7 @@ extension AboutView {
 // MARK: - View
 struct AboutView: View {
 	private let _dataService = NBFetchService()
-	private let _releasesApiUrl = "https://api.github.com/repos/akameslayer/Feather/releases/latest"
+	private let _releasesApiUrl = "https://api.github.com/repos/akameslayer/Featherwright/releases/latest"
 
 	@State private var _latestFeatherRelease: GithubRelease?
 

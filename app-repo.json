@@ -1,14 +1,14 @@
 {
   "name": "Featherwright Repository",
   "identifier": "dev.akameslayer.feather-repo",
-  "iconURL": "https://github.com/akameslayer/Feather/blob/v1.x/iOS/Resources/Icons/Main/Mac@3x.png?raw=true",
-  "website": "https://github.com/akameslayer/Feather",
+  "iconURL": "https://github.com/akameslayer/Featherwright/blob/v1.x/iOS/Resources/Icons/Main/Mac@3x.png?raw=true",
+  "website": "https://github.com/akameslayer/Featherwright",
   "apps": [
     {
       "name": "Featherwright",
       "bundleIdentifier": "thewonderofyou.Feather",
       "developerName": "Calvin Moon",
-      "iconURL": "https://github.com/akameslayer/Feather/blob/v1.x/iOS/Resources/Icons/Main/Mac@3x.png?raw=true",
+      "iconURL": "https://github.com/akameslayer/Featherwright/blob/v1.x/iOS/Resources/Icons/Main/Mac@3x.png?raw=true",
       "localizedDescription": "Featherwright is a free on-device iOS application manager/installer built with UIKit for quality. A community-driven fork of Feather — same bundle ID, so you can switch between them freely.",
       "subtitle": "On-device signing application",
       "tintColor": "848ef9",
@@ -17,20 +17,20 @@
           "version": "2.9.1",
           "date": "2026-08-28T06:20:23Z",
           "size": 12598584,
-          "downloadURL": "https://github.com/akameslayer/Feather/releases/download/v2.9.1/Feather.ipa"
+          "downloadURL": "https://github.com/akameslayer/Featherwright/releases/download/v2.9.1/Feather.ipa"
         }
       ],
       "appPermissions": {},
       "screenshotURLs": [
-        "https://github.com/akameslayer/Feather/blob/v1.x/Images/Library.png?raw=true",
-        "https://github.com/akameslayer/Feather/blob/v1.x/Images/Repos.png?raw=true",
-        "https://github.com/akameslayer/Feather/blob/v1.x/Images/Sign.png?raw=true",
-        "https://github.com/akameslayer/Feather/blob/v1.x/Images/Store.png?raw=true"
+        "https://github.com/akameslayer/Featherwright/blob/v1.x/Images/Library.png?raw=true",
+        "https://github.com/akameslayer/Featherwright/blob/v1.x/Images/Repos.png?raw=true",
+        "https://github.com/akameslayer/Featherwright/blob/v1.x/Images/Sign.png?raw=true",
+        "https://github.com/akameslayer/Featherwright/blob/v1.x/Images/Store.png?raw=true"
       ],
       "version": "2.9.1",
       "versionDate": "2026-08-28T06:20:23Z",
       "size": 12598584,
-      "downloadURL": "https://github.com/akameslayer/Feather/releases/download/v2.9.1/Feather.ipa"
+      "downloadURL": "https://github.com/akameslayer/Featherwright/releases/download/v2.9.1/Feather.ipa"
     }
   ],
   "news": [
