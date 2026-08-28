@@ -20,6 +20,7 @@ struct SigningView: View {
 	@State private var _isFilePickerPresenting = false
 	@State private var _isImagePickerPresenting = false
 	@State private var _isSigning = false
+	@State private var _signingTask: Task<Void, Never>?
 	@State private var _selectedPhoto: PhotosPickerItem? = nil
 	@State var appIcon: UIImage?
 	
@@ -118,6 +119,13 @@ struct SigningView: View {
 			}
 			.disabled(_isSigning)
 			.animation(.smooth, value: _isSigning)
+		}
+		.onDisappear {
+			// Dismissing the pane while signing is ongoing stops the underlying
+			// operation as best as we can (in-flight zsign runs cannot be killed,
+			// but its result is then discarded instead of kept).
+			_signingTask?.cancel()
+			_signingTask = nil
 		}
 		.onAppear {
 			// ppq protection
@@ -279,13 +287,19 @@ extension SigningView {
 		generator.impactOccurred()
 		_isSigning = true
 		
-		FR.signPackageFile(
+		_signingTask = FR.signPackageFile(
 			app,
 			using: _temporaryOptions,
 			icon: appIcon,
 			certificate: _selectedCert()
 		) { error in
 			if let error {
+				// The pane was dismissed mid-sign and the operation was
+				// cancelled — there is nothing to report anymore.
+				if error is CancellationError {
+					_isSigning = false
+					return
+				}
 				let ok = UIAlertAction(title: .localized("Dismiss"), style: .cancel) { _ in
 					dismiss()
 				}

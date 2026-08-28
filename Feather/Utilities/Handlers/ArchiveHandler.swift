@@ -31,6 +31,7 @@ final class ArchiveHandler: NSObject {
 	}
 	
 	func move() async throws {
+		try Task.checkCancellation()
 		guard let appUrl = Storage.shared.getAppDirectory(for: _app) else {
 			throw SigningFileHandlerError.appNotFound
 		}
@@ -45,6 +46,9 @@ final class ArchiveHandler: NSObject {
 	}
 	
 	func archive() async throws -> URL {
+		// Packaging (zip) cannot be interrupted once started, so this is the
+		// last point at which a cancellation avoids the work entirely.
+		try Task.checkCancellation()
 		return try await Task.detached(priority: .background) { [self] in
 			guard let payloadUrl = await self._payloadUrl else {
 				throw SigningFileHandlerError.appNotFound

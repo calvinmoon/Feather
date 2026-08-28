@@ -38,6 +38,7 @@ final class SigningHandler: NSObject {
 	}
 	
 	func copy() async throws {
+		try Task.checkCancellation()
 		guard let appUrl = Storage.shared.getAppDirectory(for: _app) else {
 			throw SigningFileHandlerError.appNotFound
 		}
@@ -52,6 +53,7 @@ final class SigningHandler: NSObject {
 	}
 	
 	func modify() async throws {
+		try Task.checkCancellation()
 		guard let movedAppPath = _movedAppPath else {
 			throw SigningFileHandlerError.appNotFound
 		}
@@ -71,6 +73,7 @@ final class SigningHandler: NSObject {
 			try await _modifyPluginIdentifiers(old: oldIdentifier, new: identifier, for: movedAppPath)
 		}
 		
+		try Task.checkCancellation()
 		try await _modifyDict(using: infoDictionary, with: _options, to: movedAppPath)
 		
 		if let icon = appIcon {
@@ -81,6 +84,7 @@ final class SigningHandler: NSObject {
 			try await _modifyLocalesForName(name, for: movedAppPath)
 		}
 		
+		try Task.checkCancellation()
 		if !_options.removeFiles.isEmpty {
 			try await _removeFiles(for: movedAppPath, from: _options.removeFiles)
 		}
@@ -92,6 +96,7 @@ final class SigningHandler: NSObject {
 			try await _locateMachosAndChangeToSDK26(for: movedAppPath)
 		}
 		
+		try Task.checkCancellation()
 		if _options.experiment_replaceSubstrateWithEllekit {
 			try await _inject(for: movedAppPath, with: _options)
 		} else {
@@ -103,9 +108,11 @@ final class SigningHandler: NSObject {
 		// iOS "26" (19) needs special treatment
 		try await _locateMachosAndFixupArm64eSlice(for: movedAppPath)
 		
+		try Task.checkCancellation()
 		let handler = ZsignHandler(appUrl: movedAppPath, options: _options, cert: appCertificate)
 		try await handler.disinject()
 		
+		try Task.checkCancellation()
 		if
 			_options.signingOption == .default,
 			appCertificate != nil
@@ -119,6 +126,10 @@ final class SigningHandler: NSObject {
 			throw SigningFileHandlerError.missingCertifcate
 		}
 		
+		// zsign runs synchronously and cannot be interrupted once started, so
+		// a cancellation that lands mid-sign is honoured here by discarding
+		// the result instead of moving it into the library.
+		try Task.checkCancellation()
 		try await self.move()
 		try await self.addToDatabase()
 		

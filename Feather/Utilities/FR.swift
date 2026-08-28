@@ -44,13 +44,14 @@ enum FR {
 		}
 	}
 	
+	@discardableResult
 	static func signPackageFile(
 		_ app: AppInfoPresentable,
 		using options: Options,
 		icon: UIImage?,
 		certificate: CertificatePair?,
 		completion: @escaping (Error?) -> Void
-	) {
+	) -> Task<Void, Never> {
 		Task.detached {
 			let handler = SigningHandler(app: app, options: options)
 			handler.appCertificate = certificate

@@ -19,6 +19,7 @@ struct InstallPreviewView: View {
 	@AppStorage("Feather.serverMethod") private var _serverMethod: Int = 0
 	@State private var _isWebviewPresenting = false
 	@State private var progressTask: Task<Void, Never>?
+	@State private var _installTask: Task<Void, Never>?
 	
 	var app: AppInfoPresentable
 	@StateObject var viewModel: InstallerStatusViewModel
@@ -107,8 +108,14 @@ struct InstallPreviewView: View {
 		#endif
 		
 		.onDisappear {
+			// Dismissing the pane stops the underlying installation as best
+			// as we can: cancel the orchestration task and shut the local
+			// server down so an in-flight device transfer is cut off.
+			_installTask?.cancel()
+			_installTask = nil
 			progressTask?.cancel()
 			progressTask = nil
+			installer.stop()
 			
 			#if !targetEnvironment(macCatalyst)
 			BackgroundAudioManager.shared.stop()
@@ -151,13 +158,16 @@ struct InstallPreviewView: View {
 			return
 		}
 				
-		Task.detached {
+		_installTask = Task.detached {
 			do {
 				let handler = await ArchiveHandler(app: app, viewModel: viewModel)
 				try await handler.move()
 				
 				let packageUrl = try await handler.archive()
-				
+
+				// The pane may have been dismissed while packaging; bail out before
+				// anything is offered to the device.
+				try Task.checkCancellation()
 				if await !isSharing {
 					if await _installationMethod == 0 {
 						await MainActor.run {
@@ -178,6 +188,8 @@ struct InstallPreviewView: View {
 					} else if await _installationMethod == 1 {
 						let handler = await InstallationProxy(viewModel: viewModel)
 						let isSelf = app.identifier == Bundle.main.bundleIdentifier!
+						// InstallationProxy cancels its inner operation (upload and
+						// connection setup) when the surrounding task is cancelled.
 						try await handler.install(at: packageUrl, suspend: isSelf)
 					}
 				} else {
@@ -196,6 +208,9 @@ struct InstallPreviewView: View {
 						}
 					}
 				}
+			} catch is CancellationError {
+				// The pane was dismissed mid-install; the operation was
+				// stopped as best as we could, nothing to report.
 			} catch is VPNUnreachableError {
 				await progressTask?.cancel()
 

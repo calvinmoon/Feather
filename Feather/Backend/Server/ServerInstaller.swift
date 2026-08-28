@@ -19,6 +19,7 @@ class ServerInstaller: Identifiable, ObservableObject {
 	let id = UUID()
 	let port = Int.random(in: 4000...8000)
 	private var _needsShutdown = false
+	private let _shutdownLock = NSLock()
 	
 	var packageUrl: URL?
 	var app: AppInfoPresentable
@@ -88,11 +89,22 @@ class ServerInstaller: Identifiable, ObservableObject {
 	}
 	
 	private func _shutdownServer() {
+		_shutdownLock.lock()
+		defer { _shutdownLock.unlock() }
 		guard _needsShutdown else { return }
 		
 		_needsShutdown = false
 		_server?.server.shutdown()
 		_server?.shutdown()
+	}
+	/// Stops the underlying HTTP server. Used when the install pane is
+	/// dismissed mid-installation so an in-flight device download is cut off
+	/// instead of being served to completion in the background.
+	func stop() {
+		DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+			guard let self else { return }
+			self._shutdownServer()
+		}
 	}
 	
 	private func _updateStatus(_ newStatus: InstallerStatusViewModel.InstallerStatus) {
