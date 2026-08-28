@@ -177,8 +177,7 @@ struct InstallPreviewView: View {
 						}
 					} else if await _installationMethod == 1 {
 						let handler = await InstallationProxy(viewModel: viewModel)
-						let isSelf = app.identifier == Bundle.main.bundleIdentifier!
-						try await handler.install(at: packageUrl, suspend: isSelf, shouldExit: isSelf)
+						try await handler.install(at: packageUrl, suspend: app.identifier == Bundle.main.bundleIdentifier!)
 					}
 				} else {
 					let package = try await handler.moveToArchive(packageUrl, shouldOpen: !_useShareSheet)
