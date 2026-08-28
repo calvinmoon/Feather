@@ -57,13 +57,14 @@ extension Certificate {
 		return CertificateReader(url).decoded
 	}()
 
-	/// Checks a given certificate is the same one by byte comparison used to sign Feather app,
+	/// Checks a given certificate is the one used to sign Feather by comparing `application-identifier`.
+	/// `application-identifier` compares as "TeamID.BundleID"
 	var signedFeather: Bool {
 		guard
-			let featherCerts = Certificate.feather?.DeveloperCertificates,
-			let certs = DeveloperCertificates
+			let identifier = Entitlements?["application-identifier"]?.value as? String,
+			let embeddedIdentifier = Certificate.feather?.Entitlements?["application-identifier"]?.value as? String
 		else { return false }
 
-		return certs.contains(where: featherCerts.contains)
+		return identifier == embeddedIdentifier
 	}
 }
