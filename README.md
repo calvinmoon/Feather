@@ -45,8 +45,6 @@ Everything Feather has, plus what lands here:
 
 ### What's different so far
 
-Small things, honestly — but they're things that weren't going upstream:
-
 - Offer **uninstall & reinstall** on idevice installs with a mismatched certificate.
 - Stop ongoing signing/installation when the pane is dismissed.
 - **Pairing file status button** in tunnel settings.
