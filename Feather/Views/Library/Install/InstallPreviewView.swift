@@ -177,7 +177,8 @@ struct InstallPreviewView: View {
 						}
 					} else if await _installationMethod == 1 {
 						let handler = await InstallationProxy(viewModel: viewModel)
-						try await handler.install(at: packageUrl, suspend: app.identifier == Bundle.main.bundleIdentifier!)
+						let isSelf = app.identifier == Bundle.main.bundleIdentifier!
+						try await handler.install(at: packageUrl, suspend: isSelf)
 					}
 				} else {
 					let package = try await handler.moveToArchive(packageUrl, shouldOpen: !_useShareSheet)
@@ -195,9 +196,16 @@ struct InstallPreviewView: View {
 						}
 					}
 				}
-			} catch {
+			} catch is VPNUnreachableError {
 				await progressTask?.cancel()
-				
+
+				await MainActor.run {
+					_presentVPNUnreachableAlert()
+				}
+			} catch {
+				Logger.misc.error("Install failed: \(String(describing: error))")
+				await progressTask?.cancel()
+
 				await MainActor.run {
 					UIAlertController.showAlertWithOk(
 						title: .localized("Install"),
@@ -211,7 +219,44 @@ struct InstallPreviewView: View {
 			}
 		}
 	}
-	
+
+	private func _presentVPNUnreachableAlert() {
+		let localDevVpnUrl = URL(string: "localdevvpn://")
+		let isLocalDevVpnAvailable = localDevVpnUrl.map { UIApplication.shared.canOpenURL($0) } ?? false
+
+		let primaryAction: UIAlertAction
+		if isLocalDevVpnAvailable {
+			primaryAction = UIAlertAction(title: .localized("Enable VPN"), style: .default) { _ in
+				guard let enableUrl = URL(string: "localdevvpn://enable?scheme=feather") else { return }
+				// A process already running before LocalDevVPN's tunnel comes up can keep a
+				// stale NECP routing policy for up to about a minute, blocking its own
+				// traffic through the new tunnel even though the interface is up — only a
+				// fresh process launch is guaranteed to pick up the current policy right
+				// away. So once the handoff to LocalDevVPN is confirmed, quit outright; the
+				// user reopens Feather into a clean process instead of waiting it out.
+				UIApplication.shared.open(enableUrl, options: [:]) { _ in
+					CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
+					exit(0)
+				}
+			}
+		} else {
+			primaryAction = UIAlertAction(title: .localized("Download LocalDevVPN"), style: .default) { _ in
+				UIApplication.open("https://apps.apple.com/us/app/localdevvpn/id6755608044")
+				dismiss()
+			}
+		}
+
+		let cancelAction = UIAlertAction(title: .localized("Cancel"), style: .cancel) { _ in
+			dismiss()
+		}
+
+		UIAlertController.showAlert(
+			title: .localized("Cannot Reach Device"),
+			message: .localized("Feather couldn't connect to your device. Make sure LocalDevVPN is running, then try installing again."),
+			actions: [primaryAction, cancelAction]
+		)
+	}
+
 	private func startInstallProgressPolling(
 		bundleID: String,
 		viewModel: InstallerStatusViewModel
