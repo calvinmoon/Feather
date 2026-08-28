@@ -34,6 +34,15 @@ struct TunnelView: View {
 			}
 			
 			Section {
+				Button {
+					_isImportingPairingPresenting = true
+				} label: {
+					Label(
+						doesHavePairingFile ? .localized("Pairing File Imported") : .localized("Pairing File Not Imported"),
+						systemImage: doesHavePairingFile ? "checkmark.circle.fill" : "xmark.circle.fill"
+					)
+					.foregroundStyle(doesHavePairingFile ? .green : .red)
+				}
 				Button(.localized("Import Pairing File"), systemImage: "square.and.arrow.down") {
 					_isImportingPairingPresenting = true
 				}
