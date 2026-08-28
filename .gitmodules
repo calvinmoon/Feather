@@ -1,7 +1,7 @@
 [submodule "Zsign"]
 	path = Zsign
-	url = https://github.com/khcrysalis/Zsign-Package
-	branch = package
+	url = https://github.com/akameslayer/Zsign-Package
+	branch = fix/ocsp-response-crash-on-6ffe703
 [submodule "IDeviceKitten"]
 	path = IDeviceKitten
 	url = https://github.com/akameslayer/IDeviceKit
