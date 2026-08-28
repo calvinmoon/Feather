@@ -54,8 +54,6 @@ Everything Feather has, plus what lands here:
 - Detects when **Featherwright itself was signed** with one of your certificates, and always shows the PPQ check.
 - Fixed the **app icon selection** checkmark.
 - No more **indefinite hang** when connecting to a device while a VPN is unreachable.
-- **Donation/sponsor prompts removed.**
-- Maintenance: `IDeviceKit` forked and patched, release CI fixed.
 
 Check the [commit history](https://github.com/akameslayer/Featherwright/commits/main/) for the latest.
 
