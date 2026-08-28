@@ -31,12 +31,12 @@ struct CertificatesInfoView: View {
 				if data?.signedFeather == true {
 					Section {
 						Label {
-							Text(.localized("%@ was signed using this certificate.", arguments: Bundle.main.name))
+							Text(verbatim: .localized("%@ was signed using this certificate.", arguments: Bundle.main.name))
 						} icon: {
 							FRAppIconView(size: 24)
 						}
 					} footer: {
-						Text(.localized("%@ must be updated with a new certificate once this one expires.", arguments: Bundle.main.name))
+						Text(verbatim: .localized("%@ must be updated with a new certificate once this one expires.", arguments: Bundle.main.name))
 					}
 				}
 
