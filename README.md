@@ -19,8 +19,6 @@ Featherwright is the answer to that:
 - **If you're a user** who wanted a fix, a feature, or a tweak that upstream wouldn't take — it probably lives here.
 - **If you're a developer whose PR was rejected, ignored, or closed upstream** — you are explicitly welcome here. Bring it over. Open an issue first for anything large, but the bar for "why should this exist?" is: *does someone want it?* That's the bar.
 
-There isn't much difference from upstream yet, and that's fine — forks have to start somewhere. Over time Featherwright will grow its own identity, and when it makes sense it will become fully independent. For now, the goal is simple: merge the good work, fix the pain points, and keep the workshop open.
-
 ## Drop-in compatible with Feather
 
 Featherwright deliberately keeps the **same bundle identifier** as upstream (`thewonderofyou.Feather`), so:
