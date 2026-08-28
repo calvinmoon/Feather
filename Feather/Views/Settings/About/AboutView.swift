@@ -11,12 +11,6 @@ import NimbleJSON
 
 // MARK: - Extension: Model
 extension AboutView {
-	struct CreditsModel: Codable, Hashable {
-		let name: String?
-		let desc: String?
-		let github: String
-	}
-
 	struct GithubRelease: Decodable {
 		let tagName: String
 		let htmlUrl: URL
@@ -30,14 +24,8 @@ extension AboutView {
 
 // MARK: - View
 struct AboutView: View {
-	@State private var _credits: [CreditsModel] = [
-		.init(name: "C", desc: "Developer", github: "claration"),
-		.init(name: "Asami", desc: "Developer", github: "Nyasami"),
-		.init(name: "Lakhan Lothiyi", desc: "AltStore Repositories", github: "llsc12"),
-	]
-	
 	private let _dataService = NBFetchService()
-	private let _releasesApiUrl = "https://api.github.com/repos/calvinmoon/Feather/releases/latest"
+	private let _releasesApiUrl = "https://api.github.com/repos/akameslayer/Feather/releases/latest"
 
 	@State private var _latestFeatherRelease: GithubRelease?
 
@@ -48,7 +36,7 @@ struct AboutView: View {
 				VStack {
 					FRAppIconView(size: 72)
 					
-					Text(Bundle.main.exec)
+					Text(Bundle.main.name)
 						.font(.largeTitle)
 						.bold()
 						.foregroundStyle(Color.accentColor)
@@ -76,42 +64,8 @@ struct AboutView: View {
 			}
 			.frame(maxWidth: .infinity)
 			.listRowBackground(EmptyView())
-			
-			NBSection(.localized("Credits")) {
-				ForEach(_credits, id: \.github) { credit in
-					_credit(name: credit.name, desc: credit.desc, github: credit.github)
-				}
-				.transition(.slide)
-			}
 		}
 		.onAppear(perform: _checkForUpdates)
-	}
-}
-
-// MARK: - Extension: view
-extension AboutView {
-	@ViewBuilder
-	private func _credit(
-		name: String?,
-		desc: String?,
-		github: String
-	) -> some View {
-		Button {
-			UIApplication.open("https://github.com/\(github)")
-		} label: {
-			HStack {
-				FRIconCellView(
-					title: name ?? github,
-					subtitle: desc ?? "",
-					iconUrl: URL(string: "https://github.com/\(github).png")!,
-					size: 45,
-					isCircle: true
-				)
-				
-				Image(systemName: "arrow.up.right")
-					.foregroundColor(.secondary.opacity(0.65))
-			}
-		}
 	}
 }
 

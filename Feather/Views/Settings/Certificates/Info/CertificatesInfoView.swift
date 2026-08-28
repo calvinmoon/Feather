@@ -31,12 +31,12 @@ struct CertificatesInfoView: View {
 				if data?.signedFeather == true {
 					Section {
 						Label {
-							Text(.localized("Feather app was signed using this certificate."))
+							Text(.localized("%@ was signed using this certificate.", arguments: Bundle.main.name))
 						} icon: {
 							FRAppIconView(size: 24)
 						}
 					} footer: {
-						Text(.localized("Feather must be updated with a new certificate once this one expires."))
+						Text(.localized("%@ must be updated with a new certificate once this one expires.", arguments: Bundle.main.name))
 					}
 				}
 

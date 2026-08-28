@@ -1,6 +1,8 @@
 # Contributing
 
-Feather is a sideloading app meant to be used on stock versions, to keep compatibility we have to utililize stock features to keep it working. As such, we have specific contribution rules in place to maintain this and Feathers integrity.
+Featherwright is a community-driven fork of Feather, and the whole point of this fork is to be a good home for contributions. If your PR was rejected or ignored upstream, bring it here — it will actually get reviewed.
+
+Featherwright is a sideloading app meant to be used on stock versions, to keep compatibility we have to utililize stock features to keep it working. As such, we have specific contribution rules in place to maintain this and the app's integrity.
 
 Any contributions should follow the [Code of Conduct](./CODE_OF_CONDUCT.md).
 
@@ -9,7 +11,7 @@ Any contributions should follow the [Code of Conduct](./CODE_OF_CONDUCT.md).
 - **No usage of any exploits of any kind**.
 - **No contributions related to retrieving any signing certificates owned by companies**.
 - **Modifying any hardcoded links should be discussed before changing**.
-- **If you're planning on making a large contribution, please [make an issue](https://github.com/calvinmoon/Feather) beforehand**.
+- **If you're planning on making a large contribution, please [make an issue](https://github.com/akameslayer/Feather) beforehand**.
 - **Your contributions should be licensed appropriately**. 
   - Feather: GPLv3
   - AltSourceKit: MIT
@@ -29,7 +31,7 @@ Any contributions should follow the [Code of Conduct](./CODE_OF_CONDUCT.md).
 
 1. Clone repository
     ```sh
-    git clone https://github.com/calvinmoon/Feather --recursive
+    git clone https://github.com/akameslayer/Feather --recursive
     ```
     - `Zsign` is a submodule, recursive is required.
 
