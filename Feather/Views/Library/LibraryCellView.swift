@@ -86,6 +86,8 @@ struct LibraryCellView: View {
 		.onTapGesture {
 			if isEditing {
 				_toggleSelection()
+			} else if app.isSigned {
+				selectedInfoAppPresenting = AnyApp(base: app)
 			}
 		}
 		.swipeActions {
