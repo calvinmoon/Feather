@@ -45,10 +45,17 @@ Everything Feather has, plus what lands here:
 
 ### What's different so far
 
-- Offer **uninstall & reinstall** on idevice installs with a mismatched certificate.
-- Stop ongoing signing/installation when the pane is dismissed.
+- **Uninstall & reinstall** offered when an idevice install hits a mismatched certificate.
+- **Cancel an ongoing signing/installation** by dismissing the pane.
 - **Pairing file status button** in tunnel settings.
-- Open **Get Info** when tapping a signed app in the library.
+- Tap a signed app in the library to open **Get Info**.
+- Option to **delete the signed app** after it's installed.
+- **In-app update check** — the About page tells you when a new release is out.
+- Detects when **Featherwright itself was signed** with one of your certificates, and always shows the PPQ check.
+- Fixed the **app icon selection** checkmark.
+- No more **indefinite hang** when connecting to a device while a VPN is unreachable.
+- **Donation/sponsor prompts removed.**
+- Maintenance: `IDeviceKit` forked and patched, release CI fixed.
 
 Check the [commit history](https://github.com/akameslayer/Featherwright/commits/main/) for the latest.
 
